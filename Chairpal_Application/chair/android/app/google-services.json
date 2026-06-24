@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "689288253470",
+    "project_id": "chairpal-b95f3",
+    "storage_bucket": "chairpal-b95f3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689288253470:android:941badc5a9032a87889e0f",
+        "android_client_info": {
+          "package_name": "com.example.chair_pal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgC3oVzgWlHegphK4ht_nXfNc_gAjq80U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

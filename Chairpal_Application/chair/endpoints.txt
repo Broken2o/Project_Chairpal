@@ -1,0 +1,75 @@
+Create a collection: POST /categories
+Get a collection: GET /categories/5?include=owner,parent,children,organizations,organizations.owner,organizations.categories,organizations.country,organizations.city,places,places.owner,places.categories,places.reviews,places.favoritedBy
+Delete a collection: DELETE /categories/9
+Update a collection: POST /categories/8?_method=PUT
+Get all collections: GET /categories?main_only=1&include=owner,parent,children,organizations,organizations.owner,organizations.categories,organizations.country,organizations.city,places,places.owner,places.categories,places.reviews,places.favoritedBy&search=u
+Create a collection: POST /floors/2/map
+Get a collection: GET /floors/1/map
+Delete a collection: DELETE /floors/2/map
+Create a collection: POST /buildings/7/floors
+Get a collection: GET /floors/2?include=building,building.organization,map,places
+Delete a collection: DELETE /floors/6
+Update a collection: POST /floors/2/?_method=PUT
+Get all collections: GET /buildings/2/floors?include=building,building.organization,map,places&search=1
+Create a collection: POST /organizations/4/reviews
+Delete a collection: DELETE /reviews/22
+Toggle: POST /organizations/1/favorite
+Visit: POST /organizations/1/visit
+Create a collection: POST /organizations?include=owner,categories,categories.owner,categories.parent,categories.children,categories.organizations,categories.places,country,city,reviews,favoritedBy,visitors,comments,buildings.organization,buildings.floors,buildings.floors.map,buildings.floors.places
+Get a collection: GET /organizations/8
+Delete a collection: DELETE /organizations/9
+Update a collection: POST /organizations/6?_method=PUT&include=owner,categories,categories.owner,categories.parent,categories.children,categories.organizations,categories.places,country,city,reviews,favoritedBy,visitors,comments,buildings.organization,buildings.floors,buildings.floors.map,buildings.floors.places
+Get all collections: GET /organizations?include=categories,places,categoreis.places&search=Wolff
+Create a collection: POST /organizations/23/buildings
+Get a collection: GET /buildings/2
+Delete a collection: DELETE /buildings/1
+Update a collection: POST /buildings/2?_method=PUT
+Get all collections: GET /organizations/5/buildings?search=art
+Create a collection: POST /places/4/reviews
+Delete a collection: DELETE /reviews/{review}
+Toggle: POST /places/1/favorite
+Visit: POST /places/1/visit
+Create a collection: POST /floors/2/places?include=owner,categories,categories.owner,categories.parent,categories.children,categories.organizations,categories.places,country,city,reviews,favoritedBy,visitors,comments,parent,children,floor,floor.map,floor.building,floor.building.organization,map
+Get a collection: GET /places/1
+Delete a collection: DELETE /places/22
+Update a collection: POST /places/16?_method=PUT&include=owner,categories,categories.owner,categories.parent,categories.children,categories.organizations,categories.places,country,city,reviews,favoritedBy,visitors,comments,parent,children,floor,floor.map,floor.building,floor.building.organization,map
+Get all collections: GET /places?search=Hudson
+Get all for floor: GET /floors/2/places?include=owner,categories,categories.owner,categories.parent,categories.children,categories.organizations,categories.places,country,city,reviews,favoritedBy,visitors,comments,parent,children,floor,floor.map,floor.building,floor.building.organization,map&search=8637
+Toggle Like: POST /posts/1/like
+Get a Post Likes: GET /posts/2/likes?pagination=1
+Share a Post: POST /posts/3/share
+Get a Post Shares: GET /posts/3/shares
+Create a Comment: POST /posts/32/comments
+Delete a Comment: DELETE /comments/5
+Toggle Comment Like: POST /comments/4/like
+Get all Comment Likes: GET /comments/32/likes
+Update a Comment: POST /comments/3?_method=PUT
+Get all Post Comments: GET /posts/32/comments
+Create a Post: POST /posts
+Get a Post: GET /posts/2
+Delete a Post: DELETE /posts/6
+Toggle Hide Post: POST /posts/3/hide
+Get all Posts: GET /posts?search=26IwF
+Update a Post: POST /posts/5?_method=PUT
+Send Message: POST /chats/1
+Update a Message: POST /messages/3?_method=PUT
+View a Chat messages: GET /chats/1
+Delete a Message: DELETE /messages/1
+Delete a Chat: DELETE /chats/2
+List all Chats: GET /chats?pagination=1
+Friend List: GET /community/friends
+Friend Requests: GET /community/friends/requests
+Handle Friend Requests: POST /community/friends/16/handle
+Send Friend Request: POST /community/friends/send
+Remove Friend: DELETE /community/friends/15/remove
+View a community profile: GET /community/users/2
+Create a collection: POST /countries
+Get a collection: GET /countries/9
+Delete a collection: DELETE /countries/8
+Update a collection: POST /countries/9?_method=PUT
+Get all collections: GET /countries
+Create a collection: POST /cities
+Get a collection: GET /cities/8
+Delete a collection: DELETE /cities/8
+Update a collection: POST /cities/8?_method=PUT
+Get all collections: GET /cities

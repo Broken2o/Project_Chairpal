@@ -1,0 +1,22 @@
+ydlidar_ros2_driver_node:
+  ros__parameters:
+    port: /dev/ttyAMA0        # High quality hardware UART after disabling bluetooth
+    baudrate: 115200          # YDLIDAR X2 default baudrate
+    lidar_type: 1             # 1 = TYPE_TRIANGLE (X2 uses triangle ranging)
+    device_type: 0            # 0 = YDLIDAR_TYPE_SERIAL
+    sample_rate: 3            # 3 kHz sample rate for X2
+    abnormal_check_count: 4
+    fixed_resolution: false
+    reversion: true           # Lidar is mounted upside down
+    inverted: true            # Flip scan data so ROS reads it correctly
+    auto_reconnect: true
+    isSingleChannel: true     # X2 is single channel
+    intensity: false
+    support_motor_dtr: false
+    angle_max: 180.0
+    angle_min: -180.0
+    range_max: 8.0            # X2 max range: 8 metres
+    range_min: 0.35           # Increased to 35cm to ignore wheelchair legs
+    frequency: 7.0            # Scanning frequency (Hz)
+    invalid_range_is_inf: false
+    point_cloud_preserving: false

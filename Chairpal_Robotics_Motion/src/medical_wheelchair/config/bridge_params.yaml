@@ -1,0 +1,116 @@
+# Bridge configuration for medical_wheelchair
+- ros_topic: "/clock"
+  gz_topic: "/clock"
+  ros_type: "rosgraph_msgs/msg/Clock"
+  gz_type: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+- ros_topic: "/scan"
+  gz_topic: "/scan"
+  ros_type: "sensor_msgs/msg/LaserScan"
+  gz_type: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+- ros_topic: "/joint_states"
+  gz_topic: "/joint_states"
+  ros_type: "sensor_msgs/msg/JointState"
+  gz_type: "gz.msgs.Model"
+  direction: GZ_TO_ROS
+
+- ros_topic: "/cmd_vel"
+  gz_topic: "/cmd_vel"
+  ros_type: "geometry_msgs/msg/Twist"
+  gz_type: "gz.msgs.Twist"
+  direction: BIDIRECTIONAL
+
+# Camera topics
+- ros_topic: "/camera/image"
+  gz_topic: "/world/empty/model/wheelchair/link/base_footprint/sensor/camera/image"
+  ros_type: "sensor_msgs/msg/Image"
+  gz_type: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic: "/camera/depth_image"
+  gz_topic: "/world/empty/model/wheelchair/link/base_footprint/sensor/camera/depth_image"
+  ros_type: "sensor_msgs/msg/Image"
+  gz_type: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# - ros_topic: "/camera/points"
+#   gz_topic: "/world/empty/model/wheelchair/link/base_footprint/sensor/camera/points"
+#   ros_type: "sensor_msgs/msg/PointCloud2"
+#   gz_type: "gz.msgs.PointCloudPacked"
+#   direction: GZ_TO_ROS
+
+- ros_topic: "/camera/camera_info"
+  gz_topic: "/world/empty/model/wheelchair/link/base_footprint/sensor/camera/camera_info"
+  ros_type: "sensor_msgs/msg/CameraInfo"
+  gz_type: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# Steering and Wheel Commands
+- ros_topic: "/cmd_front_left_steer"
+  gz_topic: "/cmd_front_left_steer"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/cmd_front_right_steer"
+  gz_topic: "/cmd_front_right_steer"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/cmd_rear_left_steer"
+  gz_topic: "/cmd_rear_left_steer"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/cmd_rear_right_steer"
+  gz_topic: "/cmd_rear_right_steer"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/cmd_front_left_wheel"
+  gz_topic: "/cmd_front_left_wheel"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/cmd_front_right_wheel"
+  gz_topic: "/cmd_front_right_wheel"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/cmd_middle_left_wheel"
+  gz_topic: "/cmd_middle_left_wheel"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/cmd_middle_right_wheel"
+  gz_topic: "/cmd_middle_right_wheel"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/cmd_rear_left_wheel"
+  gz_topic: "/cmd_rear_left_wheel"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/cmd_rear_right_wheel"
+  gz_topic: "/cmd_rear_right_wheel"
+  ros_type: "std_msgs/msg/Float64"
+  gz_type: "gz.msgs.Double"
+  direction: ROS_TO_GZ
+
+- ros_topic: "/imu"
+  gz_topic: "/imu"
+  ros_type: "sensor_msgs/msg/Imu"
+  gz_type: "gz.msgs.IMU"
+  direction: GZ_TO_ROS

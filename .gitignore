@@ -1,0 +1,33 @@
+# Python cache
+__pycache__/
+*.pyc
+.venv/
+
+# Large binary files (GitHub 100MB limit)
+*.rar
+*.zip
+Chairpal_Bakend.zip
+Fuzzy.zip
+fuzzy_sensor.rar
+ChairPal_Chatbot.zip
+Chairpal_Application.rar
+Chairpal_Robotics_Motion.rar
+chairpal_1.rar
+
+# Large model files
+*.ftz
+*.onnx
+Chairpal_Robotics_Motion/src/best.onnx
+
+# Video files
+*.mp4
+*.avi
+*.mkv
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node/PHP dependencies
+node_modules/
+vendor/

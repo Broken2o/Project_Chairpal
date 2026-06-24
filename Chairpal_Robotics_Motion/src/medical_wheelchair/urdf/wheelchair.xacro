@@ -1,0 +1,535 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="medical_wheelchair">
+
+  <!-- Materials -->
+  <material name="silver"><color rgba="0.75 0.75 0.75 1"/></material>
+  <material name="dark_grey"><color rgba="0.2 0.2 0.2 1"/></material>
+  <material name="fabric_red"><color rgba="0.6 0.1 0.1 1"/></material>
+  <material name="black"><color rgba="0.1 0.1 0.1 1"/></material>
+  <material name="grey"><color rgba="0.5 0.5 0.5 1"/></material>
+
+  <!-- Inertia Macros -->
+  <xacro:macro name="box_inertia" params="m w h d">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12)*(h*h + d*d)}" ixy="0" ixz="0" iyy="${(m/12)*(w*w + d*d)}" iyz="0" izz="${(m/12)*(w*w + h*h)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12)*(3*r*r + h*h)}" ixy="0" ixz="0" iyy="${(m/12)*(3*r*r + h*h)}" iyz="0" izz="${(m/2)*r*r}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="tubular_link" params="name length radius m material">
+    <link name="${name}">
+      <xacro:cylinder_inertia m="${m}" r="${radius}" h="${length}"/>
+      <visual>
+        <origin xyz="${length/2} 0 0" rpy="0 1.5708 0"/>
+        <geometry><cylinder radius="${radius}" length="${length}"/></geometry>
+        <material name="${material}"/>
+      </visual>
+      <collision>
+        <origin xyz="${length/2} 0 0" rpy="0 1.5708 0"/>
+        <geometry><cylinder radius="${radius}" length="${length}"/></geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0.35" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Base Link (Seat) - Reduced mass to lower COM -->
+  <link name="base_link">
+    <xacro:box_inertia m="1.0" w="0.41" h="0.60" d="0.05"/>
+    <visual>
+      <geometry><box size="0.60 0.41 0.05"/></geometry>
+      <material name="dark_grey"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.60 0.41 0.05"/></geometry>
+    </collision>
+  </link>
+
+  <!-- Backrest -->
+  <link name="backrest">
+    <xacro:box_inertia m="0.5" w="0.05" h="0.45" d="0.5"/>
+    <visual>
+      <geometry><box size="0.05 0.45 0.5"/></geometry>
+      <material name="fabric_red"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.05 0.45 0.5"/></geometry>
+    </collision>
+  </link>
+  <joint name="backrest_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="backrest"/>
+    <origin xyz="-0.2 0 0.275" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Armrests -->
+  <link name="left_armrest">
+    <xacro:box_inertia m="0.1" w="0.4" h="0.04" d="0.2"/>
+    <visual><geometry><box size="0.4 0.04 0.2"/></geometry><material name="silver"/></visual>
+    <collision><geometry><box size="0.4 0.04 0.2"/></geometry></collision>
+  </link>
+  <joint name="left_armrest_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_armrest"/>
+    <origin xyz="0 0.2 0.125" rpy="0 0 0"/>
+  </joint>
+
+  <link name="right_armrest">
+    <xacro:box_inertia m="0.1" w="0.4" h="0.04" d="0.2"/>
+    <visual><geometry><box size="0.4 0.04 0.2"/></geometry><material name="silver"/></visual>
+    <collision><geometry><box size="0.4 0.04 0.2"/></geometry></collision>
+  </link>
+  <joint name="right_armrest_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_armrest"/>
+    <origin xyz="0 -0.2 0.125" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Main Chassis Hub - Increased mass for lower COM -->
+  <link name="chassis_hub">
+    <xacro:box_inertia m="8.0" w="0.2" h="0.3" d="0.05"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.2 0.3 0.05"/></geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.2 0.3 0.05"/></geometry>
+    </collision>
+  </link>
+  <joint name="chassis_hub_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis_hub"/>
+    <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Camera Link & Joint: Mounted at the front edge of the seat tilted down 20 deg (0.35 rad) -->
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.05 0.05 0.05"/></geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.28 0 0.265" rpy="0 0 0"/>
+  </joint>
+
+  <!-- IMU Sensor -->
+  <link name="imu_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+    </inertial>
+  </link>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0.20 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="imu_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>1</always_on>
+      <update_rate>50</update_rate>
+      <visualize>true</visualize>
+      <topic>/imu</topic>
+      <ignition_frame_id>wheelchair/imu_link</ignition_frame_id>
+    </sensor>
+  </gazebo>
+
+  <!-- Optical Link for ROS -->
+  <link name="camera_link_optical"/>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_link_optical"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+  </joint>
+
+  <!-- LiDAR Sensor & Mount: flush under silver chassis_hub (not buried inside the box—scan origin sits below deck). -->
+  <link name="lidar_mount">
+    <visual>
+      <origin xyz="0 0 -0.01" rpy="0 0 0"/>
+      <geometry><box size="0.08 0.08 0.02"/></geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+
+  <joint name="lidar_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_mount"/>
+    <origin xyz="0.23 0 0.19" rpy="0 0 0"/>
+  </joint>
+
+  <link name="lidar_link">
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.04" length="0.05"/></geometry>
+      <material name="fabric_red"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.04" length="0.05"/></geometry>
+    </collision>
+  </link>
+
+  <joint name="lidar_joint" type="fixed">
+    <parent link="lidar_mount"/>
+    <child link="lidar_link"/>
+    <!-- Cylinder center below the silver deck so horizontal rays clear hub collision -->
+    <!-- Set to upright (roll=0) because 2D SLAM ignores roll/pitch and would see mirrored scans -->
+    <origin xyz="0 0 -0.04" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="lidar_link">
+    <sensor name="gpu_lidar" type="gpu_lidar">
+      <pose>0 0 0 0 0 0</pose>
+      <topic>/scan</topic>
+      <ignition_frame_id>wheelchair/lidar_link</ignition_frame_id>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.45</min>
+          <max>8.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <visualize>true</visualize>
+    </sensor>
+  </gazebo>
+
+  <!-- Ultrasonic Sensor -->
+  <link name="ultrasonic_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.02 0.04 0.02"/></geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <joint name="ultrasonic_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="ultrasonic_link"/>
+    <origin xyz="0.28 0 0.24" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="camera_link">
+    <sensor name="camera" type="rgbd_camera">
+      <topic>camera</topic>
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>10</far>
+        </clip>
+      </camera>
+      <always_on>1</always_on>
+      <update_rate>15</update_rate>
+      <visualize>true</visualize>
+      <ignition_frame_id>wheelchair/camera_link_optical</ignition_frame_id>
+    </sensor>
+  </gazebo>
+
+  <!-- Navigation Macros for Sides -->
+  <xacro:macro name="chassis_side" params="side reflect">
+    <!-- Rear Sloped Arm -->
+    <xacro:tubular_link name="rear_arm_${side}" length="0.2485" radius="0.02" m="0.15" material="silver"/>
+    <joint name="rear_arm_${side}_joint" type="fixed">
+      <parent link="chassis_hub"/>
+      <child link="rear_arm_${side}"/>
+      <!-- Physically moved to the FRONT of the chair, pointing FORWARD -->
+      <origin xyz="0.1 ${reflect * 0.12} 0" rpy="0 1.2396 0"/>
+    </joint>
+
+    <!-- Rear Wheel -->
+    <link name="rear_${side}_wheel">
+      <xacro:cylinder_inertia m="0.3" r="0.065" h="0.05"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="0.065" length="0.05"/></geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="0.065" length="0.05"/></geometry>
+      </collision>
+      <gazebo reference="rear_${side}_wheel">
+        <!-- Restored high friction to match old working values -->
+        <mu1>1.5</mu1>
+        <mu2>1.5</mu2>
+        <self_collide>false</self_collide>
+      </gazebo>
+    </link>
+    <!-- Rear Steering Mechanism -->
+    <link name="rear_${side}_steering_link">
+      <xacro:cylinder_inertia m="0.1" r="0.02" h="0.05"/>
+      <visual>
+        <geometry><cylinder radius="0.02" length="0.05"/></geometry>
+        <material name="dark_grey"/>
+      </visual>
+      <gazebo reference="rear_${side}_steering_link">
+        <self_collide>false</self_collide>
+      </gazebo>
+    </link>
+    <joint name="rear_${side}_steering_joint" type="revolute">
+      <parent link="rear_arm_${side}"/>
+      <child link="rear_${side}_steering_link"/>
+      <origin xyz="0.2485 0 0" rpy="0 -1.2396 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="-0.785" upper="0.785" effort="10.0" velocity="2.30"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <joint name="rear_${side}_wheel_joint" type="continuous">
+      <parent link="rear_${side}_steering_link"/>
+      <child link="rear_${side}_wheel"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <!-- Restored effort/velocity to match working old values -->
+      <limit effort="40.0" velocity="10.0"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <!-- Front Sloped Arm -->
+    <xacro:tubular_link name="front_arm_${side}" length="0.15" radius="0.02" m="0.15" material="silver"/>
+    <joint name="front_arm_${side}_joint" type="fixed">
+      <parent link="chassis_hub"/>
+      <child link="front_arm_${side}"/>
+      <!-- Physically moved to the REAR of the chair, pointing BACKWARD -->
+      <origin xyz="-0.1 ${reflect * 0.12} 0" rpy="0 0.8 3.14159"/>
+    </joint>
+
+    <!-- Bogie Pivot -->
+    <link name="bogie_pivot_${side}">
+      <xacro:cylinder_inertia m="0.05" r="0.015" h="0.05"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="0.015" length="0.05"/></geometry>
+        <material name="grey"/>
+      </visual>
+    </link>
+    <joint name="bogie_pivot_${side}_joint" type="revolute">
+      <parent link="front_arm_${side}"/>
+      <child link="bogie_pivot_${side}"/>
+      <origin xyz="0.15 0 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <!-- Tightened limits: reduce over-rotation that lifts middle wheel -->
+      <limit effort="10" velocity="1" lower="-0.15" upper="0.15"/>
+      <!-- High damping to resist lateral turning forces that flip the bogie -->
+      <dynamics damping="5.0" friction="2.0"/>
+    </joint>
+
+    <!-- Inverted V Bogie branches -->
+    <!-- Middle branch -->
+    <xacro:tubular_link name="bogie_middle_arm_${side}" length="0.1774" radius="0.015" m="0.1" material="silver"/>
+    <joint name="bogie_middle_arm_joint_${side}" type="fixed">
+      <parent link="bogie_pivot_${side}"/>
+      <child link="bogie_middle_arm_${side}"/>
+      <origin xyz="0 0 0" rpy="0 1.5400 0"/> 
+    </joint>
+
+    <!-- Front branch -->
+    <xacro:tubular_link name="bogie_front_arm_${side}" length="0.1464" radius="0.015" m="0.1" material="silver"/>
+    <joint name="bogie_front_arm_joint_${side}" type="fixed">
+      <parent link="bogie_pivot_${side}"/>
+      <child link="bogie_front_arm_${side}"/>
+      <origin xyz="0 0 0" rpy="0 0.2543 0"/> 
+    </joint>
+
+    <!-- Front Wheel -->
+    <link name="front_${side}_wheel">
+      <xacro:cylinder_inertia m="0.3" r="0.065" h="0.05"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="0.065" length="0.05"/></geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="0.065" length="0.05"/></geometry>
+      </collision>
+      <gazebo reference="front_${side}_wheel">
+        <!-- Restored high friction to match old working values -->
+        <mu1>1.5</mu1>
+        <mu2>1.5</mu2>
+        <self_collide>false</self_collide>
+      </gazebo>
+    </link>
+    <!-- Front Steering Mechanism -->
+    <link name="front_${side}_steering_link">
+      <xacro:cylinder_inertia m="0.1" r="0.02" h="0.05"/>
+      <visual>
+        <geometry><cylinder radius="0.02" length="0.05"/></geometry>
+        <material name="dark_grey"/>
+      </visual>
+      <gazebo reference="front_${side}_steering_link">
+        <self_collide>false</self_collide>
+      </gazebo>
+    </link>
+    <joint name="front_${side}_steering_joint" type="revolute">
+      <parent link="bogie_front_arm_${side}"/>
+      <child link="front_${side}_steering_link"/>
+      <origin xyz="0.1464 0 0" rpy="0 -1.0543 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="-0.785" upper="0.785" effort="10.0" velocity="2.30"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <joint name="front_${side}_wheel_joint" type="continuous">
+      <parent link="front_${side}_steering_link"/>
+      <child link="front_${side}_wheel"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 -1 0"/>
+      <!-- Restored effort/velocity to match working old values -->
+      <limit effort="40.0" velocity="10.0"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <!-- Middle Wheel -->
+    <link name="middle_${side}_wheel">
+      <xacro:cylinder_inertia m="0.3" r="0.065" h="0.05"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="0.065" length="0.05"/></geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="0.065" length="0.05"/></geometry>
+      </collision>
+      <gazebo reference="middle_${side}_wheel">
+        <!-- Increased friction to resist lateral scrubbing during turns -->
+        <mu1>1.0</mu1>
+        <mu2>0.8</mu2>
+        <self_collide>false</self_collide>
+      </gazebo>
+    </link>
+    <joint name="middle_${side}_wheel_joint" type="continuous">
+      <parent link="bogie_middle_arm_${side}"/>
+      <child link="middle_${side}_wheel"/>
+      <origin xyz="0.1774 0 0" rpy="0 -1.5400 0"/>
+      <axis xyz="0 -1 0"/>
+      <!-- Restored effort/velocity to match working old values -->
+      <limit effort="40.0" velocity="10.0"/>
+      <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:chassis_side side="left" reflect="1"/>
+  <xacro:chassis_side side="right" reflect="-1"/>
+
+  <!-- Gazebo Plugins -->
+  <gazebo>
+    <!-- Steering Controllers (Position) - front_left, front_right, rear_left, rear_right -->
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>front_left_steering_joint</joint_name>
+      <topic>/cmd_front_left_steer</topic>
+      <p_gain>100</p_gain><d_gain>5.0</d_gain>
+    </plugin>
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>front_right_steering_joint</joint_name>
+      <topic>/cmd_front_right_steer</topic>
+      <p_gain>100</p_gain><d_gain>5.0</d_gain>
+    </plugin>
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>rear_left_steering_joint</joint_name>
+      <topic>/cmd_rear_left_steer</topic>
+      <p_gain>100</p_gain><d_gain>5.0</d_gain>
+    </plugin>
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>rear_right_steering_joint</joint_name>
+      <topic>/cmd_rear_right_steer</topic>
+      <p_gain>500</p_gain><d_gain>5.0</d_gain>
+    </plugin>
+
+    <!-- Wheel Velocity Controllers -->
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>front_left_wheel_joint</joint_name>
+      <topic>/cmd_front_left_wheel</topic>
+      <initial_velocity>0</initial_velocity>
+    </plugin>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>front_right_wheel_joint</joint_name>
+      <topic>/cmd_front_right_wheel</topic>
+      <initial_velocity>0</initial_velocity>
+    </plugin>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>middle_left_wheel_joint</joint_name>
+      <topic>/cmd_middle_left_wheel</topic>
+      <initial_velocity>0</initial_velocity>
+    </plugin>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>middle_right_wheel_joint</joint_name>
+      <topic>/cmd_middle_right_wheel</topic>
+      <initial_velocity>0</initial_velocity>
+    </plugin>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>rear_left_wheel_joint</joint_name>
+      <topic>/cmd_rear_left_wheel</topic>
+      <initial_velocity>0</initial_velocity>
+    </plugin>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>rear_right_wheel_joint</joint_name>
+      <topic>/cmd_rear_right_wheel</topic>
+      <initial_velocity>0</initial_velocity>
+    </plugin>
+
+    <plugin
+      filename="gz-sim-joint-state-publisher-system"
+      name="gz::sim::systems::JointStatePublisher">
+      <topic>/joint_states</topic>
+      <joint_name>rear_left_wheel_joint</joint_name>
+      <joint_name>rear_right_wheel_joint</joint_name>
+      <joint_name>middle_left_wheel_joint</joint_name>
+      <joint_name>middle_right_wheel_joint</joint_name>
+      <joint_name>front_left_wheel_joint</joint_name>
+      <joint_name>front_right_wheel_joint</joint_name>
+      <joint_name>bogie_pivot_left_joint</joint_name>
+      <joint_name>bogie_pivot_right_joint</joint_name>
+      <joint_name>rear_left_steering_joint</joint_name>
+      <joint_name>rear_right_steering_joint</joint_name>
+      <joint_name>front_left_steering_joint</joint_name>
+      <joint_name>front_right_steering_joint</joint_name>
+    </plugin>
+  </gazebo>
+
+</robot>
